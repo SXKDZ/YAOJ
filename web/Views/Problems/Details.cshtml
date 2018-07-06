@@ -1,0 +1,45 @@
+﻿@model YAOJ.Models.Problem
+
+@{
+    ViewData["Title"] = "Problem " + Model.ProblemID;
+}
+
+<h2>Problem @Html.DisplayFor(model => model.ProblemID): @Html.DisplayFor(model => model.Name)</h2>
+<hr />
+
+<div>
+    <h4>
+        @Html.DisplayNameFor(model => model.Description)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.Description)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.Format)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.Format)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.SampleInput)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.SampleInput)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.SampleOutput)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.SampleOutput)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.Note)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.Note)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.Limitation)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.Limitation)</pre>
+    <h4>
+        @Html.DisplayNameFor(model => model.DataHash)
+    </h4>
+    <pre>@Html.DisplayFor(model => model.DataHash)</pre>
+</div>
+<div>
+    <a asp-controller="Records" asp-action="Create" asp-route-id="@Model.ProblemID">Submit</a> |
+    <a asp-controller="Records" asp-action="Index" asp-route-searchProblemID="@Model.ProblemID">Submissions</a> |
+    <a asp-action="Edit" asp-route-id="@Model.ProblemID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

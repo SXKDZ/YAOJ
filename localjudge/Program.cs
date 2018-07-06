@@ -1,14 +1,15 @@
 ﻿using Colorful;
+using LiteDB;
 using Newtonsoft.Json;
-using System.Drawing;
-using System.IO;
-using Console = Colorful.Console;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
-using Newtonsoft.Json.Linq;
+using System.Drawing;
+using System.IO;
+using System.Net.Http;
 using System.Reflection;
-using System.Threading;
+using System.Text;
+using Console = Colorful.Console;
 
 namespace localjudge
 {
@@ -37,15 +38,22 @@ namespace localjudge
                 configContent = sr.ReadToEnd();
             }
             var config = JObject.Parse(configContent);
+            var judgeName = config["judgeConfig"]["judgeName"].ToString();
 
-            Welcome(config["judgeName"].ToString());
+            Welcome(judgeName);
 
             var rabbitServer = config["rabbitServer"].ToString();
             var rabbitUsername = config["rabbitUsername"].ToString();
             var rabbitPassword = config["rabbitPassword"].ToString();
             var rabbitPort = int.Parse(config["rabbitPort"].ToString());
 
+            var webKey = config["webKey"].ToString();
+            var webServer = config["webServer"].ToString();
+            var webPort = int.Parse(config["webPort"].ToString());
+
             var judgeContext = JudgeContext.CreateFromJson(config["judgeConfig"].ToString());
+
+            var client = new HttpClient();
 
             var connectionFactory = new ConnectionFactory()
             {
@@ -70,16 +78,47 @@ namespace localjudge
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
                 var request = JsonConvert.DeserializeObject<Request>(message);
-                Console.WriteLine("Received judge request...", Color.Coral);
+                Console.WriteLine($"Received judge request...", Color.Coral);
 
                 // get judge task from the message queue
                 var sourceCode = request.sourceCode;
                 var language = request.language;
-                var problemId = request.problemId;
-                var dataset = Dataset.CreateFromJson(Utility.GetDatasetConfigPath(judgeContext, problemId));
+                var problemID = request.problemID;
+
+                using (var db = new LiteDatabase(@"datahash.db"))
+                {
+                    var pairs = db.GetCollection<DatasetHash>("datasetHashPairs");
+
+                    var pair = pairs.FindOne(s => s.ProblemID == problemID);
+                    if (pair == null || pair.Hash != request.dataHash)
+                    {
+                        Console.Write($"Update obsolete or non-existing dataset {problemID}...",
+                            Color.Coral);
+                        DatasetHash.DownloadDataset(judgeContext, problemID, webKey, webServer, webPort);
+                        Console.WriteLine($"OK!", Color.Coral);
+                        if (pair == null)
+                        {
+                            pairs.Insert(new DatasetHash
+                            {
+                                Hash = request.dataHash,
+                                ProblemID = problemID
+                            });
+                        }
+                        else
+                        {
+                            pair.Hash = request.dataHash;
+                            pairs.Update(pair);
+                        }
+                        Console.WriteLine($"Updated database...", Color.Coral);
+                    }
+                    pairs.EnsureIndex(x => x.ProblemID);
+                }
+
+                var dataset = Dataset.CreateFromJson(Utility.GetDatasetConfigPath(judgeContext, problemID));
 
                 var judgeCase = new JudgeCase(sourceCode, language, judgeContext, dataset);
                 judgeCase.Judge();
+                Request.SendResult(client, request, judgeCase, webKey, webServer, webPort);
 
                 channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };

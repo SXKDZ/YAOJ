@@ -11,7 +11,7 @@ namespace localjudge
     {
         public WinRunnerStatus status;
         public double usedTime;
-        public int usedMemory;
+        public double usedMemory;
     }
 
     class WinRunner

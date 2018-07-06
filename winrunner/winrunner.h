@@ -20,7 +20,7 @@ namespace WinRunner {
     public:
         Status status;
         double usedTime;
-        int usedMemory;
+        double usedMemory;
     };
 
     extern "C" WINRUNNER_API void StartRestrictedProcess(Result *result, LPCWSTR cmd, LPWSTR arg,

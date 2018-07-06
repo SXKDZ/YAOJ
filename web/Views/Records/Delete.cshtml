@@ -1,0 +1,62 @@
+﻿@model YAOJ.Models.Record
+
+@{
+    ViewData["Title"] = "Delete Submission";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this submission?</h3>
+<hr />
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.ID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Problem)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Problem.ProblemID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SourceCode)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SourceCode)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UsedTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UsedTime) s
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UsedMemory)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UsedMemory) MB
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="RecordID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to Submissions</a>
+    </form>
+</div>

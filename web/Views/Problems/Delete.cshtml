@@ -1,0 +1,74 @@
+﻿@model YAOJ.Models.Problem
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Problem @Html.DisplayFor(model => model.ProblemID): @Html.DisplayFor(model => model.Name)</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProblemID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ProblemID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Format)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Format)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SampleInput)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SampleInput)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SampleOutput)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SampleOutput)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Note)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Note)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Limitation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Limitation)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DataHash)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DataHash)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ProblemID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

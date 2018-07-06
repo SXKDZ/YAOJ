@@ -1,0 +1,66 @@
+﻿@model YAOJ.Models.Problem
+
+@{
+    ViewData["Title"] = "Create Problem";
+}
+
+<h2>Create a New Problem</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Format" class="control-label"></label>
+                <textarea asp-for="Format" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Format" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SampleInput" class="control-label"></label>
+                <textarea asp-for="SampleInput" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="SampleInput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SampleOutput" class="control-label"></label>
+                <textarea asp-for="SampleOutput" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="SampleOutput" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note" class="control-label"></label>
+                <textarea asp-for="Note" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Limitation" class="control-label"></label>
+                <textarea asp-for="Limitation" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Limitation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Data" class="control-label"></label>
+                <input type="file" name="data" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

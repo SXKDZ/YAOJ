@@ -1,0 +1,98 @@
+﻿@model PaginatedList<YAOJ.Models.Record>
+
+@{
+    ViewData["Title"] = "Submissions";
+}
+
+<h2>Submissions</h2>
+<hr />
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Problem ID: <input type="text" name="searchProblemID" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().RecordID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Problem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UsedTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UsedMemory)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.RecordID">
+                        @Html.DisplayFor(modelItem => item.RecordID)
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.RecordID">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="Problems" asp-action="Details" asp-route-id="@item.ProblemID">
+                        @Html.DisplayFor(modelItem => item.ProblemID) - @Html.DisplayFor(modelItem => item.Problem.Name)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Language)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsedTime) s
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsedMemory) MB
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

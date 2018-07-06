@@ -6,13 +6,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Console = Colorful.Console;
 
 namespace localjudge
 {
-    class CompilerConfig
+    public class CompilerConfig
     {
         public string execution;
         public string parameter;
@@ -22,25 +24,27 @@ namespace localjudge
         public uint memory;
     }
     
-    class JudgeContext
+    public class JudgeContext
     {
         public Dictionary<string, CompilerConfig> compilers = new Dictionary<string, CompilerConfig>();
         public string workingDirectory;
         public string dataDirectory;
         public string tempDirectory;
         public int parallelJudge;
+        public string judgeName;
 
         public static JudgeContext CreateFromJson(string json)
         {
             var jc = new JudgeContext();
 
-            CompilerConfig[] pcompilers;
             var config = JObject.Parse(json);
+            jc.judgeName = config["judgeName"].ToString();
             jc.dataDirectory = config["dataDirectory"].ToString();
             jc.tempDirectory = config["tempDirectory"].ToString();
             jc.workingDirectory = config["workingDirectory"].ToString();
             jc.parallelJudge = int.Parse(config["parallelJudge"].ToString());
 
+            CompilerConfig[] pcompilers;
             pcompilers = JsonConvert.DeserializeObject<CompilerConfig[]>(config["compilers"].ToString());
             foreach (var c in pcompilers)
             {
@@ -76,14 +80,14 @@ namespace localjudge
         NA
     };
 
-    class JudgeResult
+    public class JudgeResult
     {
         public JudgeStatus judgeStatus;
         public double usedTime;
-        public int usedMemory;
+        public double usedMemory;
     }
 
-    class JudgeCase
+    public class JudgeCase
     {
         public string sourceCode;
         public string language;
@@ -92,7 +96,8 @@ namespace localjudge
         public JudgeStatus finalJudgeStatus = JudgeStatus.NA;
         public JudgeResult[] judgeResults;
         public double totalUsedTime = 0;
-        public int totalUsedMemory = 0;
+        public double totalUsedMemory = 0;
+        public string judgeText;
 
         public int DatasetLength { get => dataset.data.Length; }
 
@@ -103,23 +108,39 @@ namespace localjudge
             this.dataset = dataset;
         }
 
-        public void ReportFinalResult()
+        public string ReportFinalResult()
         {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string('=', 40));
+            sb.AppendLine($"LocalJudge" +
+                $" v{Assembly.GetEntryAssembly().GetName().Version}" +
+                $" {judgeContext.judgeName}");
+            sb.AppendLine(new string('=', 40));
+
             for (var i = 0; i < DatasetLength; ++i)
             {
                 Console.Write($"[{i}] ", Color.Gray);
                 Console.Write(Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description,
                     Utility.GetAttribute<JudgeStatusColorAttribute>(judgeResults[i].judgeStatus).Color);
 
-                Console.WriteLine($" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory}MB)");
-            }
+                Console.WriteLine($" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
 
-            Console.WriteLine(new string('=', 40), Color.Gray);
-            Console.Write($"Result: ");
+                sb.AppendLine($"[{i}] " +
+                    $"{Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description}" +
+                    $" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
+            }
+            
+            Console.Write("[Result] ");
             Console.Write(Utility.GetAttribute<DescriptionAttribute>(finalJudgeStatus).Description,
                 Utility.GetAttribute<JudgeStatusColorAttribute>(finalJudgeStatus).Color);
-            Console.WriteLine($" ({totalUsedTime:F2}s, {totalUsedMemory}MB)");
-            Console.WriteLine(new string('=', 40), Color.Gray);
+            Console.WriteLine($" ({totalUsedTime:F2}s, {totalUsedMemory:F2}MB)");
+
+            sb.AppendLine(new string('=', 40));
+            sb.AppendLine("Result: " +
+                $"{Utility.GetAttribute<DescriptionAttribute>(finalJudgeStatus).Description}" +
+                $" ({totalUsedTime:F2}s, {totalUsedMemory:F2}MB)");
+            sb.AppendLine(new string('=', 40));
+            return sb.ToString();
         }
 
         private bool Compile(string exePath)
@@ -166,7 +187,7 @@ namespace localjudge
                 }
 
                 finalJudgeStatus = JudgeStatus.CE;
-                ReportFinalResult();
+                judgeText = ReportFinalResult();
                 return false;
             }
             Console.WriteLine($"Compilation succeeded ({result.usedTime:F2}s, {result.usedMemory}MB)...",
@@ -250,7 +271,7 @@ namespace localjudge
                 var candidate = judgeResults.Select(i => i.judgeStatus).Where(i => i != JudgeStatus.AC);
                 finalJudgeStatus = Utility.MostCommon(candidate);
             }
-            ReportFinalResult();
+            judgeText = ReportFinalResult();
         }
     }
 }

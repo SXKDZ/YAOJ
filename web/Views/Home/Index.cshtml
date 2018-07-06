@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Yet Another Online Judge</h1>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <h2>Welcome to YAOJ</h2>
+        <p>
+            YAOJ is a open-source simple judge system for ACMers and OIers.
+        </p>
+    </div>
+    <div class="col-md-3">
+        <h2>Problems</h2>
+        <p>Find chanllenging Problems here.</p>
+        <p><a class="btn btn-default" asp-area="" asp-controller="Problems" asp-action="Index">Problems</a></p>
+    </div>
+    <div class="col-md-3">
+        <h2>Records</h2>
+        <p>Track judge records here.</p>
+        <p><a class="btn btn-default" asp-area="" asp-controller="Records" asp-action="Index">Records</a></p>
+    </div>
+    <div class="col-md-3">
+        <h2>Rankings</h2>
+        <p>View user rankings here.</p>
+        <p><a class="btn btn-default" asp-area="" asp-controller="Users" asp-action="Index">Rankings</a></p>
+    </div>
+</div>

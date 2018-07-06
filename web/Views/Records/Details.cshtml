@@ -1,0 +1,65 @@
+﻿@model YAOJ.Models.Record
+
+@{
+    ViewData["Title"] = "Submission Details";
+}
+
+<h2>Submission Details</h2>
+<hr />
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.User.ID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Problem)
+        </dt>
+        <dd>
+            <a asp-controller="Problems" asp-action="Details" asp-route-id="@Model.ProblemID">
+                @Html.DisplayFor(model => model.Problem.ProblemID)
+            </a>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Language)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Language)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UsedTime)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UsedTime) s
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UsedMemory)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UsedMemory) MB
+        </dd>
+    </dl>
+
+    <h3>
+        @Html.DisplayNameFor(model => model.JudgeText)
+    </h3>
+    <pre>@Html.DisplayFor(model => model.JudgeText)</pre>
+
+    <h3>
+        @Html.DisplayNameFor(model => model.SourceCode)
+    </h3>
+    <pre>@Html.DisplayFor(model => model.SourceCode)</pre>
+</div>
+<div>
+    <a asp-action="Delete" asp-route-id="@Model.RecordID">Delete</a> |
+    <a asp-action="Index">Back to Submissions</a>
+</div>
