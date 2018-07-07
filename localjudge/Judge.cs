@@ -115,34 +115,37 @@ namespace localjudge
         public string ReportFinalResult()
         {
             var sb = new StringBuilder();
-            sb.AppendLine(new string('=', 40));
+            sb.AppendLine(new string('=', 45));
             sb.AppendLine($"LocalJudge v{Assembly.GetEntryAssembly().GetName().Version}");
             sb.AppendLine($"Judge: {judgeContext.judgeName}");
-            sb.AppendLine(new string('=', 40));
+            sb.AppendLine(new string('=', 45));
 
-            for (var i = 0; i < DatasetLength; ++i)
+            if (finalJudgeStatus != JudgeStatus.CE)
             {
-                Console.Write($"[{i}] ", Color.Gray);
-                Console.Write(Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description,
-                    Utility.GetAttribute<JudgeStatusColorAttribute>(judgeResults[i].judgeStatus).Color);
+                for (var i = 0; i < DatasetLength; ++i)
+                {
+                    Console.Write($"[{i}] ", Color.Gray);
+                    Console.Write(Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description,
+                        Utility.GetAttribute<JudgeStatusColorAttribute>(judgeResults[i].judgeStatus).Color);
 
-                Console.WriteLine($" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
+                    Console.WriteLine($" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
 
-                sb.AppendLine($"[{i}] " +
-                    $"{Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description}" +
-                    $" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
+                    sb.AppendLine($"[{i}] " +
+                        $"{Utility.GetAttribute<DescriptionAttribute>(judgeResults[i].judgeStatus).Description}" +
+                        $" ({judgeResults[i].usedTime:F2}s, {judgeResults[i].usedMemory:F2}MB)");
+                }
+
+                Console.Write("[Result] ");
+                Console.Write(Utility.GetAttribute<DescriptionAttribute>(finalJudgeStatus).Description,
+                    Utility.GetAttribute<JudgeStatusColorAttribute>(finalJudgeStatus).Color);
+                Console.WriteLine($" ({totalUsedTime:F2}s, {totalUsedMemory:F2}MB)");
             }
-            
-            Console.Write("[Result] ");
-            Console.Write(Utility.GetAttribute<DescriptionAttribute>(finalJudgeStatus).Description,
-                Utility.GetAttribute<JudgeStatusColorAttribute>(finalJudgeStatus).Color);
-            Console.WriteLine($" ({totalUsedTime:F2}s, {totalUsedMemory:F2}MB)");
 
-            sb.AppendLine(new string('=', 40));
+            sb.AppendLine(new string('=', 45));
             sb.AppendLine("Result: " +
                 $"{Utility.GetAttribute<DescriptionAttribute>(finalJudgeStatus).Description}" +
                 $" ({totalUsedTime:F2}s, {totalUsedMemory:F2}MB)");
-            sb.AppendLine(new string('=', 40));
+            sb.AppendLine(new string('=', 45));
             return sb.ToString();
         }
 
@@ -168,7 +171,7 @@ namespace localjudge
             var compilerOutputPath = Path.Combine(judgeContext.tempDirectory, compilerOutputFilename);
 
             Console.WriteLine($"Compiling {sourceFilename}...", Color.Coral);
-            WinRunner.StartCompiler(result, compilerCommand, compilerOutputFilename, compiler.time, compiler.memory);
+            WinRunner.StartCompiler(result, compilerCommand, compilerOutputPath, compiler.time, compiler.memory);
 
             File.Delete(sourcePath);
 
@@ -179,7 +182,8 @@ namespace localjudge
                 
                 if (result.status != WinRunnerStatus.TLE)
                 {
-                    var errorMessage = string.Join("\r\n", File.ReadLines(compilerOutputFilename).Take(10));
+                    Thread.Sleep(50);
+                    var errorMessage = string.Join("\r\n", File.ReadLines(compilerOutputPath).Take(10));
 
                     Console.WriteLine("Compiler's output (first 10 lines):");
                     Console.WriteLine(errorMessage);
@@ -196,7 +200,8 @@ namespace localjudge
             Console.WriteLine($"Compilation succeeded ({result.usedTime:F2}s, {result.usedMemory}MB)...",
                 Color.Green);
 
-            File.Delete(compilerOutputFilename);
+            Thread.Sleep(50);
+            File.Delete(compilerOutputPath);
             return true;
         }
 
@@ -244,7 +249,6 @@ namespace localjudge
 
         public void Judge()
         {
-            Console.WriteLine();
             Console.WriteLine($"Judging {dataset.problem}...", Color.Coral);
 
             var exeFilename = $"{Utility.GetRandomString(8)}.exe";

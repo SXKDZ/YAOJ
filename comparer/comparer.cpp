@@ -1,4 +1,5 @@
 #include "comparer.h"
+#include <stdio.h>
 
 namespace Comparer {
     bool Comparer::FilesAreEqual(FileInfo ^ first, FileInfo ^ second) {
@@ -22,7 +23,10 @@ namespace Comparer {
             fs1->Read(one, 0, BYTES_TO_READ);
             fs2->Read(two, 0, BYTES_TO_READ);
 
-            if (BitConverter::ToInt64(one, 0) != BitConverter::ToInt64(two, 0)) {
+            auto bit_one = BitConverter::ToInt64(one, 0);
+            auto bit_two = BitConverter::ToInt64(two, 0);
+
+            if (bit_one != bit_one) {
                 fs1->Close();
                 fs2->Close();
 

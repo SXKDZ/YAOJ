@@ -78,6 +78,7 @@ namespace localjudge
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
                 var request = JsonConvert.DeserializeObject<Request>(message);
+                Console.WriteLine();
                 Console.WriteLine($"Received judge request...", Color.Coral);
 
                 // get judge task from the message queue
@@ -96,7 +97,7 @@ namespace localjudge
                             Color.Coral);
                         var hash = DatasetHash.DownloadDataset(judgeContext,
                             problemID, webKey, webServer, webPort);
-                        Console.Write($"Updated dataset {hash}...", Color.Coral);
+                        Console.WriteLine($"Updated dataset {hash}...", Color.Coral);
                         if (pair == null)
                         {
                             pairs.Insert(new DatasetHash
@@ -110,7 +111,6 @@ namespace localjudge
                             pair.Hash = request.dataHash;
                             pairs.Update(pair);
                         }
-                        Console.WriteLine($"Updated database...", Color.Coral);
                     }
                     pairs.EnsureIndex(x => x.ProblemID);
                 }
