@@ -42,8 +42,8 @@ namespace YAOJ.Controllers
         {
             int pageSize = 10;
 
-            return View(await PaginatedList<Problem>.CreateAsync(_context.Problems.AsNoTracking(),
-                page ?? 1, pageSize));
+            return View(await PaginatedList<Problem>.CreateAsync(_context.Problems.OrderBy(p=>p.ProblemID)
+                .AsNoTracking(), page ?? 1, pageSize));
         }
 
         // GET: Problems/Details/5
@@ -154,14 +154,16 @@ namespace YAOJ.Controllers
                             problem.Data = ms.ToArray();
                             problem.DataHash = GetMd5Hash(problem.Data);
                         }
+                        _context.Update(problem);
                     }
                     else
                     {
                         _context.Problems.Attach(problem);
                         var entry = _context.Entry(problem);
+                        entry.State = EntityState.Modified;
                         entry.Property(e => e.Data).IsModified = false;
+                        entry.Property(e => e.DataHash).IsModified = false;
                     }
-                    _context.Update(problem);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
