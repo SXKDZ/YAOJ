@@ -32,6 +32,8 @@ namespace localjudge
         public string tempDirectory;
         public int parallelJudge;
         public string judgeName;
+        public string secureUser;
+        public string securePassword;
 
         public static JudgeContext CreateFromJson(string json)
         {
@@ -43,6 +45,8 @@ namespace localjudge
             jc.tempDirectory = config["tempDirectory"].ToString();
             jc.workingDirectory = config["workingDirectory"].ToString();
             jc.parallelJudge = int.Parse(config["parallelJudge"].ToString());
+            jc.secureUser = config["secureUser"].ToString();
+            jc.securePassword = config["securePassword"].ToString();
 
             CompilerConfig[] pcompilers;
             pcompilers = JsonConvert.DeserializeObject<CompilerConfig[]>(config["compilers"].ToString());
@@ -112,9 +116,8 @@ namespace localjudge
         {
             var sb = new StringBuilder();
             sb.AppendLine(new string('=', 40));
-            sb.AppendLine($"LocalJudge" +
-                $" v{Assembly.GetEntryAssembly().GetName().Version}" +
-                $" {judgeContext.judgeName}");
+            sb.AppendLine($"LocalJudge v{Assembly.GetEntryAssembly().GetName().Version}");
+            sb.AppendLine($"Judge: {judgeContext.judgeName}");
             sb.AppendLine(new string('=', 40));
 
             for (var i = 0; i < DatasetLength; ++i)
@@ -207,7 +210,9 @@ namespace localjudge
             var standardInputPath = Path.Combine(datasetBasePath, dataset.data[i].input);
             var standardOutputPath = Path.Combine(datasetBasePath, dataset.data[i].output);
             
-            WinRunner.StartProcess(result, exePath, standardInputPath, userOutputPath,
+            WinRunner.StartProcess(result, exePath,
+                judgeContext.secureUser, judgeContext.securePassword,
+                standardInputPath, userOutputPath,
                 dataset.data[i].time, dataset.data[i].memory, 0);
             if (result.status != WinRunnerStatus.OK)
             {

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.IO.Compression;
+using hasher;
 
 namespace localjudge
 {
@@ -38,9 +39,8 @@ namespace localjudge
         public string ProblemID { get; set; }
         public string Hash { get; set; }
 
-        public static void DownloadDataset(JudgeContext judgeContext,
-            string problemID,
-            string webKey, string webServer, int webPort)
+        public static string DownloadDataset(JudgeContext judgeContext,
+            string problemID, string webKey, string webServer, int webPort)
         {
             var url = $"http://{webServer}:{webPort}/Problems/DownloadDataset/{problemID}?key={webKey}";
             var fileName = $"{Utility.GetRandomString(8)}.zip";
@@ -49,7 +49,16 @@ namespace localjudge
             {
                 wc.DownloadFile(url, filePath);
             }
+            Md5Hash md5Hash=new Md5Hash();
+            var hash = md5Hash.GetMd5Hash(File.ReadAllBytes(filePath));
 
+            UnzipDataset(judgeContext, problemID, filePath);
+            return hash;
+        }
+
+        public static void UnzipDataset(JudgeContext judgeContext,
+            string problemID, string filePath)
+        {
             var dataDirectory = Path.Combine(judgeContext.dataDirectory, problemID);
             if (Directory.Exists(dataDirectory))
             {

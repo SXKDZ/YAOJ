@@ -24,6 +24,7 @@ namespace WinRunner {
     };
 
     extern "C" WINRUNNER_API void StartRestrictedProcess(Result *result, LPCWSTR cmd, LPWSTR arg,
+        LPCWSTR username, LPCWSTR password,
         LPCWSTR infile, LPCWSTR outfile, LPCWSTR errfile,
         unsigned int time, unsigned int memory, 
         bool restrictProcess, ULONG_PTR affinity);
@@ -31,6 +32,7 @@ namespace WinRunner {
 
     extern "C" WINRUNNER_API void StartCompiler(Result *result, LPWSTR cmd, LPCWSTR errfile,
         unsigned int time, unsigned int memory);
-    extern "C" WINRUNNER_API void StartProcess(Result *result, LPWSTR cmd, LPCWSTR infile, LPCWSTR outfile,
+    extern "C" WINRUNNER_API void StartProcess(Result *result, LPWSTR cmd, 
+        LPCWSTR username, LPCWSTR password, LPCWSTR infile, LPCWSTR outfile,
         unsigned int time, unsigned int memory, ULONG_PTR affinity);
 }

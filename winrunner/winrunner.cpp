@@ -14,6 +14,7 @@ double WinRunner::MakeTime(FILETIME const & kernel_time, FILETIME const & user_t
 }
 
 void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
+    LPCWSTR username, LPCWSTR password,
     LPCWSTR infile, LPCWSTR outfile, LPCWSTR errfile,
     unsigned int time, unsigned int memory,
     bool restrictProcess, ULONG_PTR affinity) {
@@ -68,6 +69,7 @@ void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
     ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
     ZeroMemory(&si, sizeof(STARTUPINFO));
 
+
     if (infile != NULL) {
         hin = CreateFile(infile, GENERIC_READ, FILE_SHARE_READ, &sa,
             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -90,8 +92,23 @@ void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
     si.dwFlags = STARTF_USESTDHANDLES;
     si.wShowWindow = SW_HIDE;
 
-    BOOL bResult = CreateProcess(cmd, arg, NULL, NULL, TRUE,
-        CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+    HANDLE CallerToken = NULL;
+    HANDLE CalleeToken = NULL;
+
+    if (username && password) {
+        OpenProcessToken(GetCurrentProcess(), TOKEN_ALL_ACCESS, &CallerToken);
+        LogonUser(username, NULL, password, LOGON32_LOGON_INTERACTIVE, LOGON32_PROVIDER_DEFAULT, &CalleeToken);
+        ImpersonateLoggedOnUser(CalleeToken);
+
+        si.lpDesktop = const_cast<LPWSTR>(L"");
+
+        BOOL bResult = CreateProcessAsUser(CalleeToken, cmd, arg, NULL, NULL, TRUE,
+            CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+    }
+    else {
+        BOOL bResult = CreateProcess(cmd, arg, NULL, NULL, TRUE,
+            CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+    }
 
     // place the process in the job
     AssignProcessToJobObject(hjob, pi.hProcess);
@@ -129,19 +146,28 @@ void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
     result->usedTime = usedTime;
     result->usedMemory = usedMemory;
 
+    RevertToSelf();
+
     CloseHandle(pi.hProcess);
     CloseHandle(hjob);
     CloseHandle(hin);
     CloseHandle(hout);
     CloseHandle(herr);
+    if (CalleeToken) {
+        CloseHandle(CalleeToken);
+    }
+    if (CallerToken) {
+        CloseHandle(CallerToken);
+    }
 }
 
-void WinRunner::StartCompiler(Result *result, LPWSTR cmd, LPCWSTR errfile,
-    unsigned int time, unsigned int memory) {
-    StartRestrictedProcess(result, NULL, cmd, NULL, NULL, errfile, time, memory, false, NULL);
+void WinRunner::StartCompiler(Result *result, LPWSTR cmd, 
+    LPCWSTR errfile, unsigned int time, unsigned int memory) {
+    StartRestrictedProcess(result, NULL, cmd, NULL, NULL, NULL, NULL, errfile, time, memory, false, NULL);
 }
 
-void WinRunner::StartProcess(Result *result, LPWSTR cmd, LPCWSTR infile, LPCWSTR outfile,
+void WinRunner::StartProcess(Result *result, LPWSTR cmd, 
+    LPCWSTR username, LPCWSTR password, LPCWSTR infile, LPCWSTR outfile,
     unsigned int time, unsigned int memory, ULONG_PTR affinity) {
-    StartRestrictedProcess(result, NULL, cmd, infile, outfile, NULL, time, memory, true, affinity);
+    StartRestrictedProcess(result, NULL, cmd, username, password, infile, outfile, NULL, time, memory, true, affinity);
 }

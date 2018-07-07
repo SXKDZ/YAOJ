@@ -92,10 +92,11 @@ namespace localjudge
                     var pair = pairs.FindOne(s => s.ProblemID == problemID);
                     if (pair == null || pair.Hash != request.dataHash)
                     {
-                        Console.Write($"Update obsolete or non-existing dataset {problemID}...",
+                        Console.WriteLine($"Updating obsolete or non-existing dataset {problemID}...",
                             Color.Coral);
-                        DatasetHash.DownloadDataset(judgeContext, problemID, webKey, webServer, webPort);
-                        Console.WriteLine($"OK!", Color.Coral);
+                        var hash = DatasetHash.DownloadDataset(judgeContext,
+                            problemID, webKey, webServer, webPort);
+                        Console.Write($"Updated dataset {hash}...", Color.Coral);
                         if (pair == null)
                         {
                             pairs.Insert(new DatasetHash

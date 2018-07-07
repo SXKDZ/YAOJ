@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "comparer", "comparer\compar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "web", "web\web.csproj", "{70FF4EC8-09BD-4B2E-B54D-E486168BCCE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hasher", "hasher\hasher.csproj", "{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,18 @@ Global
 		{70FF4EC8-09BD-4B2E-B54D-E486168BCCE2}.Release|x64.Build.0 = Release|Any CPU
 		{70FF4EC8-09BD-4B2E-B54D-E486168BCCE2}.Release|x86.ActiveCfg = Release|Any CPU
 		{70FF4EC8-09BD-4B2E-B54D-E486168BCCE2}.Release|x86.Build.0 = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|x64.Build.0 = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Debug|x86.Build.0 = Debug|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|x64.ActiveCfg = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|x64.Build.0 = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|x86.ActiveCfg = Release|Any CPU
+		{48C3E7A4-EAE5-4FD1-9217-41BD6F5AC6CA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,7 +32,7 @@ namespace localjudge
             var response = await client.PostAsync(url, content);
             var responseString = await response.Content.ReadAsStringAsync();
 
-            Console.Write($"Reporting results...", Color.Coral);
+            Console.Write($"Report results...", Color.Coral);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 Console.WriteLine("OK!", Color.Coral);
