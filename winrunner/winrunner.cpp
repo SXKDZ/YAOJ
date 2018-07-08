@@ -50,7 +50,7 @@ void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
 
     // UI restrictions
     JOBOBJECT_BASIC_UI_RESTRICTIONS jobuir;
-    jobuir.UIRestrictionsClass |= JOB_OBJECT_UILIMIT_ALL;
+    jobuir.UIRestrictionsClass = JOB_OBJECT_UILIMIT_ALL;
     SetInformationJobObject(hjob, JobObjectBasicUIRestrictions, &jobuir, sizeof(jobuir));
 
     // spawn the process that is to be in the job, 
@@ -68,7 +68,6 @@ void WinRunner::StartRestrictedProcess(Result * result, LPCWSTR cmd, LPWSTR arg,
 
     ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
     ZeroMemory(&si, sizeof(STARTUPINFO));
-
 
     if (infile != NULL) {
         hin = CreateFile(infile, GENERIC_READ, FILE_SHARE_READ, &sa,
